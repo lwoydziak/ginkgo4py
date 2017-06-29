@@ -1,21 +1,11 @@
-import os
-import glob
+from ginkgo4py import Ginkgo4Py
 
-
-class Ginkgo4Py(object):
-    def DiscoverFrom(self, directory):
-        class Discovered(object):
-            def Files(self):
-                files = None
-                pwd = os.getcwd()
-                print(pwd)
-                if os.path.exists(directory):
-                    files = glob.glob(directory+"/test*.py")
-                    assert len(files) == 1
-                return files
-        return Discovered()
-
-
+fixtures = "../fixtures"
 
 def test_ginkgo4py_can_discover_test_files():
-    assert Ginkgo4Py().DiscoverFrom("fixtures").Files() == ["fixtures/test_file.py"]
+    assert Ginkgo4Py().DiscoverFrom(fixtures).Files() == ["../fixtures/test_file.py"]
+
+
+def test_given_discovered_files_discover_tests():
+    testFiles = Ginkgo4Py().DiscoverFrom(fixtures).Files()
+    assert Ginkgo4Py().DiscoverTestNamesFrom(testFiles) == ["A first test"]
