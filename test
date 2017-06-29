@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+{
+unamestr=`uname`
+scriptDir=`dirname $0`
+
+if [[ "$unamestr" == 'Linux' ]]; then
+    scriptDir=`readlink -f $scriptDir`
+elif [[ "$unamestr" == 'Darwin' ]]; then
+    scriptDir=`greadlink -f $scriptDir`
+fi
+
+pushd $scriptDir/docker
+} &> /dev/null
+
+echo "Building test container..."
+{
+	docker build -t ginkgo4pytest -f Dockerfile .
+} &> /dev/null
+
+echo "Running tests..."
+docker run -it --rm -v $scriptDir:/data --name Ginkgo4PyTest ginkgo4pytest
